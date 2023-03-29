@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#2.2.2  version
+#3.1.0  version
 
 import os,sys
 from time import time
@@ -29,7 +29,7 @@ class Unbuffered(object):
 sys.stdout = Unbuffered(sys.stdout)
 
 def printHelp():
-    print('\ndanpos version 3.0.0')
+    print('\ndanpos version 3.1.0')
     print('For help information for each function, try:\npython danpos.py <function> -h')
     print('\nFunctions:')
     print('\tdpos:\n\t\tanalyze each protein-binding position (~100\n\t\tto ~200bp wide) across the whole genome,\n\t\te.g. nucleosome positions.')
@@ -50,9 +50,9 @@ def runDANPOS(command=''):
     Description:
         this function provide an entrance to the package DANPOS.
         It parse input parameters, print some help messages if required, else it call and pass all parameters values to the main function danpos().
-    
+
     parameters:
-        none  
+        none
     '''
     if command=='dpos':tname='position'
     elif command=='dtriple':tname='position, peak, and region'
@@ -61,7 +61,7 @@ def runDANPOS(command=''):
         # at least one parameter need to be specified, will print help message if no parameter is specified
         print("\nusage:\n\npython danpos.py",command, "<path> [optional arguments]\n\nfor more help, please try: python danpos.py "+command+" -h\n")
         return 0
-    
+
     # parse all input parameters
     import argparse
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,\
@@ -143,7 +143,7 @@ def runDANPOS(command=''):
         #region calling
         parser.add_argument('--------------------------',dest="separator1",metavar='',default=None,help="")
         parser.add_argument('---   region calling   ---',dest="separator1",metavar='',default=None,help="")
-        parser.add_argument('-------------------------- ',dest="separator1",metavar='',default=None,help="")  
+        parser.add_argument('-------------------------- ',dest="separator1",metavar='',default=None,help="")
         if command=='dtriple':
                 parser.add_argument('-r', '--call_region',dest="call_region",metavar='',default=1,type=int,\
                                 help="Set to 0 if need not to analyze each invidual binding region.")
@@ -167,11 +167,11 @@ def runDANPOS(command=''):
                             help="minimal width of each peak")
         parser.add_argument('-kf', '--peak_reference',dest="peak_reference",metavar='',default=None,\
                             help="Don't call peaks, but retrive values for a set of reference peaks provided in the peak file by this parameter.")
-    if command=='dpos' or command=='dtriple': 
+    if command=='dpos' or command=='dtriple':
         # position calling
         parser.add_argument('--------------------------  ',dest="separator1",metavar='',default=None,help="")
         parser.add_argument('---  Position calling  ---',dest="separator1",metavar='',default=None,help="")
-        parser.add_argument('--------------------------   ',dest="separator1",metavar='',default=None,help="")  
+        parser.add_argument('--------------------------   ',dest="separator1",metavar='',default=None,help="")
         if command=='dtriple':
                 parser.add_argument('-j', '--call_pos',dest="call_pos",metavar='',default=1,type=int,\
                                 help="Set to 0 if need not to analyze each invidual binding position.")
@@ -188,7 +188,7 @@ def runDANPOS(command=''):
         parser.add_argument('-g', '--gapfill',dest="gapfill",metavar='',default=0,type=int,\
                             help="do gap filling? fill the gap between two neighboring positions with an additional position \
                             if the gap size is close to the a position size, set to 0 if don't fill, otherwise set to 1")
-    
+
     # occupancy processing
     parser.add_argument('--------------------------    ',dest="separator1",metavar='',default=None,help="")
     parser.add_argument('---occupancy processing---',dest="separator1",metavar='',default=None,help="")
@@ -218,7 +218,7 @@ def runDANPOS(command=''):
     parser.add_argument('-N', '--nor_region_file',dest="nor_region_file",metavar='',default=None,\
                         help="A '.wig' format file to denote the regions that could be used to calculate normalization factors.\
                         Regions to be used and not used should be assigned a value 1 and 0 in this .wig file, respectively.")
-    
+
     parser.add_argument('--nonzero',dest="nonzero",metavar='',default=0,type=int,\
                         help="set to 1 if want to normalize basepairs with non-zero values to have the same average value between different data sets.\
                         This function will be useful when some data sets has severious clonal effect, \
@@ -229,8 +229,8 @@ def runDANPOS(command=''):
                         help="the statistics method for differential test, could be 'C','P', 'F', or 'S', \
                         representing Chi-square test, Possion test, Fold change, or direct subtraction")
     '''
-    
-    
+
+
     # reads processing
     parser.add_argument('--------------------------      ',dest="separator1",metavar='',default=None,help="")
     parser.add_argument('---  reads processing  ---',dest="separator1",metavar='',default=None,help="")
@@ -256,9 +256,9 @@ def runDANPOS(command=''):
                         help="specify the size theat each fragment will be adjusted to,\
                         the size of each fragment will be adjusted to this size when reads data\
                         is converted to occupancy data. Ignore this when the input is wiggle format occupancy data")
-    
-    
-    
+
+
+
     if '-h' in sys.argv or '--help' in sys.argv:  # print help information once required by user
         print("\ndanpos 2.2.2  version\n")
         parser.print_help()
@@ -277,18 +277,18 @@ def runDANPOS(command=''):
     if args.exclude_high_percent!=0 and args.nor_region_file!=None:
         print("\nPlease don't define both -H (--exclude_high_percent) and -N (--nor_region_file) in the command line\n")
         return
-    
-    print("\ndanpos 3.0.0  version\n")
+
+    print("\ndanpos 3.1.0  version\n")
     print('command:\npython'," ".join(sys.argv)) # print the command line, this let the user to keep a log and remember what parameters they specified
     print('\n',args) # print all parameter values, this provide a eacy way for the user to double check the parameter values used by DANPOS
-    
+
     from math import log10
     if True:#args.statis=='C' or args.statis=='P':
         temptestcut=args.testcut.split('-')
         if len(temptestcut)==2:testcut=float(temptestcut[1])-log10(float(temptestcut[0][:-1]))
         elif float(temptestcut[0])>0:testcut=0-log10(float(temptestcut[0]))
         else:testcut=0
-    
+
     if True:#args.statis=='C' or args.statis=='P':
         temppheight=args.pheight.split('-')
         if len(temppheight)==2:pheight=float(temppheight[1])-log10(float(temppheight[0][:-1]))
@@ -301,7 +301,7 @@ def runDANPOS(command=''):
         print("'--nonzero' must be ste to either 0 or 1")
         return
     #print testcut,pheight
-    
+
     if command=='dtriple':
         danpos(\
                #input output args
@@ -391,7 +391,7 @@ def runDANPOS(command=''):
                #the differential test method,'P':Poisson, 'C':Chi-Square
                test='P',\
                #whether or not to do position calling for each replicate, set to 1 if need to do, else set to 0.
-               pcfer=0)#args.pcfer)#0)    
+               pcfer=0)#args.pcfer)#0)
     if command=='dpos':
         danpos(\
                #input output args
@@ -421,7 +421,7 @@ def runDANPOS(command=''):
                #the differential test method,'P':Poisson, 'C':Chi-Square
                test='P',\
                #whether or not to do position calling for each replicate, set to 1 if need to do, else set to 0.
-               pcfer=0)#args.pcfer)#0)                  
+               pcfer=0)#args.pcfer)#0)
 
 def wigProfileToGene(args,wgs,pos_neg='', outname='',outmode='w'):
     rcode=''
@@ -491,7 +491,7 @@ def wigProfileToGene(args,wgs,pos_neg='', outname='',outmode='w'):
                     fo.write(oline+'\n')
                 '''
                 if len(colors)>=len(gfnames):rcode+=plot(dic=dic,names=gfnames,outname='',main=wfname+pos_neg+'.tts',nrow=args.plot_row,ncol=args.plot_column,xmin=args.plot_xmin,xmax=args.plot_xmax,ymin=args.plot_ymin,ymax=args.plot_ymax,xlab=args.plot_xlab,ylab=args.plot_ylab,colors=args.plot_colors.split(','))
-        
+
     if 'CSS' in sites:
         print('\nprofiling for Coding Start Sites (CSS)')
         d={}
@@ -521,7 +521,7 @@ def wigProfileToGene(args,wgs,pos_neg='', outname='',outmode='w'):
                     fo.write(oline+'\n')
                 '''
                 if len(colors)>=len(gfnames):rcode+=plot(dic=dic,names=gfnames,outname='',main=wfname+pos_neg+'.css',nrow=args.plot_row,ncol=args.plot_column,xmin=args.plot_xmin,xmax=args.plot_xmax,ymin=args.plot_ymin,ymax=args.plot_ymax,xlab=args.plot_xlab,ylab=args.plot_ylab,colors=args.plot_colors.split(','))
-    
+
     if 'CTS' in sites:
         print('\nprofiling for Coding Terminal Sites (CTS)')
         d={}
@@ -551,7 +551,7 @@ def wigProfileToGene(args,wgs,pos_neg='', outname='',outmode='w'):
                     fo.write(oline+'\n')
                 '''
                 if len(colors)>=len(gfnames):rcode+=plot(dic=dic,names=gfnames,outname='',main=wfname+pos_neg+'.cts',nrow=args.plot_row,ncol=args.plot_column,xmin=args.plot_xmin,xmax=args.plot_xmax,ymin=args.plot_ymin,ymax=args.plot_ymax,xlab=args.plot_xlab,ylab=args.plot_ylab,colors=args.plot_colors.split(','))
-    
+
     if 'ESS' in sites:
         print('\nprofiling for Exon Start Sites (ESS)')
         d={}
@@ -709,7 +709,7 @@ def wigProfileToBed(args,wgs,pos_neg='', outname='',outmode='w'):
                 dic={}
                 for gfname in gfnames:dic[gfname]=d[gfname][wfname]
                 if len(colors)>=len(gfnames):rcode+=plot(dic=dic,names=gfnames,outname='',main=wfname+pos_neg,nrow=args.plot_row,ncol=args.plot_column,xmin=args.plot_xmin,xmax=args.plot_xmax,ymin=args.plot_ymin,ymax=args.plot_ymax,xlab=args.plot_xlab,ylab=args.plot_ylab,colors=args.plot_colors.split(','))
-    
+
     return rcode
 
 def profile(command='profile'):
@@ -717,14 +717,14 @@ def profile(command='profile'):
     Description:
         This function parses input parameters, calls and passes all parameters values to the main function wigProfileToGene(), or print some help messages if required.
     parameters:
-        none  
+        none
     '''
-    
+
     if (len(sys.argv)<3) and ('-h' not in sys.argv) and ('--help' not in sys.argv):
         # at least two parameter need to be specified, will print help message if no parameter is specified
         print("\nusage:\npython danpos.py profile <wiggle_file_paths> [optional arguments]\n\nfor more help, please try: python danpos.py profile -h\n")
         return 0
-    
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,\
                                      usage="\npython danpos.py <command> <wiggle_file_paths> [optional arguments]\n\n",\
                                      description='',epilog="Kaifu Chen, et al. chenkaifu@gmail.com,  \
@@ -817,8 +817,8 @@ def profile(command='profile'):
             return 0
     else:
         print("\nfor help, please try: python danpos.py profile -h\n")
-        return 0 
-    
+        return 0
+
     print('\ncommand:\npython'," ".join(sys.argv)) # print the command line, this let the user to keep a log and remember what parameters they specified
     #if args.genefile_paths==None and args.bed3file_paths==None:
     #    print 'Wrong: both genefile_paths and bed3file_paths are provided, please p'
@@ -828,7 +828,7 @@ def profile(command='profile'):
     else:
         print('the argument --heatmap can only be 0 or 1')
     args.excludeP=args.excludeP*0.01 #add by kaifu on 12/16/2013
-    
+
     print('\n\nparsing wiggle format data ...')
     if args.wigfile_aliases==None:args.wigfile_aliases=args.wigfile_paths
     wgs=Wigs()
@@ -856,7 +856,7 @@ def profile(command='profile'):
             rcode+=wigProfileToGene(args,wgs,pos_neg='',outname=args.name,outmode=outmode)
             outmode='a'
         if args.bed3file_paths!=None:rcode+=wigProfileToBed(args,wgs,pos_neg='',outname=args.name,outmode=outmode)
-    
+
     if args.pos_neg==1 or args.pos_neg==2 or args.pos_neg==3:
         print('\n\nprofiling  for positive values ...')
         pwgs=deepcopy(wgs)
@@ -870,7 +870,7 @@ def profile(command='profile'):
         else:
             if args.genefile_paths!=None:rcode+=wigProfileToGene(args,pwgs,pos_neg='.pos',outname=args.name,outmode='a')
             if args.bed3file_paths!=None:rcode+=wigProfileToBed(args,pwgs,pos_neg='.pos',outname=args.name,outmode='a')
-        
+
     if args.pos_neg==-1 or args.pos_neg==2 or args.pos_neg==3:
         print('\n\nprofiling  for negative values ...')
         nwgs=deepcopy(wgs)
@@ -887,13 +887,13 @@ def profile(command='profile'):
                 rcode+=wigProfileToGene(args,nwgs,pos_neg='.neg',outname=args.name,outmode=outmode)
                 outmode='a'
             if args.bed3file_paths!=None:rcode+=wigProfileToBed(args,nwgs,pos_neg='.neg',outname=args.name,outmode=outmode)
-    
-    
+
+
     if args.periodicity!=0:
         print('\n\ncalculating periodicity strength...')
         dic=batchOccPSD(wgs,outname=args.name+'.signalPeriodicity')
         rcode+=plot(dic=dic,outname='',main='signalPeriodicity',nrow=args.plot_row,ncol=args.plot_column,xmin=args.plot_xmin,xmax=args.plot_xmax,ymin=args.plot_ymin,ymax=args.plot_ymax,xlab='Periodicity Length (bp)',ylab='Strength',colors=args.plot_colors.split(','))
-    
+
     rcode='pdf("'+args.name+'.pdf")\n'+rcode
     rcode+='dev.off()\n'
     fo=open(args.name+'.R','w')
@@ -901,20 +901,20 @@ def profile(command='profile'):
     fo.close()
     r(rcode)
     print('all job done!')
-    
+
 def runPositionStatistics(command='runPositionStatistics'):
     '''
     Description:
         This function parses input parameters, calls and passes all parameters values to the main functions related to positions analysis, or print some help messages if required.
     parameters:
-        none  
+        none
     '''
-    
+
     if (len(sys.argv)<3) and ('-h' not in sys.argv) and ('--help' not in sys.argv):
         # at least two parameter need to be specified, will print help message if no parameter is specified
         print("\nusage:\npython danpos.py stat <file_paths> <file_aliases> [optional arguments]\n\nfor more help, please try: python danpos stat -h\n")
         return 0
-    
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,\
                                      usage="\npython danpos.py <command> <file_paths> <file_aliases>[optional arguments]\n\n",\
                                      description='',epilog="Kaifu Chen, et al. chenkaifu@gmail.com,  \
@@ -935,7 +935,7 @@ def runPositionStatistics(command='runPositionStatistics'):
                         e.g. a,b,c")
     parser.add_argument('--name', dest="name",metavar='',default='stat',\
                         help="A name for the experiment.")
-    
+
     parser.add_argument('--plot_row',dest="plot_row",metavar='',default=2,type=int,\
                         help="Number of rows to plot on each page.")
     parser.add_argument('--plot_column',dest="plot_column",metavar='',default=2,type=int,\
@@ -943,50 +943,50 @@ def runPositionStatistics(command='runPositionStatistics'):
     parser.add_argument('--plot_colors', dest="plot_colors",metavar='',default='black,gray,red,blue,orange,purple,skyblue,cyan,green,blue4,darkgoldenrod',\
                         help="The colors to be used in the plot.")
 
-    
+
     parser.add_argument('-------------------------------        ',dest="separator1",metavar='',default=None,help="")
     parser.add_argument('----- position statistics -----        ',dest="separator1",metavar='',default=None,help="")
     parser.add_argument('-------------------------------         ',dest="separator1",metavar='',default=None,help="")
-    
+
     parser.add_argument('--dis_min',dest="dis_min",metavar='',default=None,type=int,\
                         help="Minimal distance between positions.")
     parser.add_argument('--dis_max',dest="dis_max",metavar='',default=None,type=int,\
                         help="Maximal distance between positions.")
     parser.add_argument('--dis_step',dest="dis_step",metavar='',default=10,type=int,\
                         help="Bin size or step used to calculate the distribution of distance between neighboring positions.")
-    
+
     parser.add_argument('--occ_min',dest="occ_min",metavar='',default=None,type=int,\
                         help="Minimal occupancy value of positions.")
     parser.add_argument('--occ_max',dest="occ_max",metavar='',default=None,type=int,\
                         help="Maximal occupancy value of positions.")
     parser.add_argument('--occ_step',dest="occ_step",metavar='',default=10,type=int,\
                         help="Step or bin size used to calculate occupancy values distribution.")
-    
+
     parser.add_argument('--fuz_min',dest="fuz_min",metavar='',default=None,type=int,\
                         help="Minimal fuzziness score of positions.")
     parser.add_argument('--fuz_max',dest="fuz_max",metavar='',default=None,type=int,\
                         help="Maximal fuzziness score of positions.")
     parser.add_argument('--fuz_step',dest="fuz_step",metavar='',default=None,type=int,\
                         help="Step or bin size used to calculate fuzziness scores distribution.")
-    
+
     parser.add_argument('-------------------------------          ',dest="separator1",metavar='',default=None,help="")
     parser.add_argument('---- peak/region statistics ---          ',dest="separator1",metavar='',default=None,help="")
     parser.add_argument('-------------------------------           ',dest="separator1",metavar='',default=None,help="")
-    
+
     parser.add_argument('--width_min',dest="width_min",metavar='',default=None,type=int,\
                         help="Minimal width of peak or region.")
     parser.add_argument('--width_max',dest="width_max",metavar='',default=None,type=int,\
                         help="Maximal width of peak or region.")
     parser.add_argument('--width_step',dest="width_step",metavar='',default=None,type=int,\
                         help="Step or bin size used to calculate width distribution.")
-    
+
     parser.add_argument('--total_signal_min',dest="total_signal_min",metavar='',default=None,type=int,\
                         help="Minimal total signal value in each peak or region.")
     parser.add_argument('--total_signal_max',dest="total_signal_max",metavar='',default=None,type=int,\
                         help="Maximal total signal value in each peak or region.")
     parser.add_argument('--total_signal_step',dest="total_signal_step",metavar='',default=None,type=int,\
                         help="Step or bin size used to calculate distribution of total signal value in each peak or region.")
-    
+
     parser.add_argument('--height_min',dest="height_min",metavar='',default=None,type=int,\
                         help="Minimal peak or region height.")
     parser.add_argument('--height_max',dest="height_max",metavar='',default=None,type=int,\
@@ -1006,8 +1006,8 @@ def runPositionStatistics(command='runPositionStatistics'):
             return 0
     else:
         print("\nfor help, please try: python danpos stat -h\n")
-        return 0 
-    
+        return 0
+
     print('\ncommand:\npython'," ".join(sys.argv)) # print the command line, this let the user to keep a log and remember what parameters they specified
 
     occ,dis,fuz,width,auc,height={},{},{},{},{},{}
@@ -1059,11 +1059,11 @@ def runPositionStatistics(command='runPositionStatistics'):
         if args.dis_min==None:args.dis_min=100
         if args.dis_max==None:args.dis_max=250
         if args.dis_step==None:args.dis_step=10
-        
+
         disdic=batchPositionDistanceDistribution(occ,outname=args.name+'.distance',min=args.dis_min,max=args.dis_max,step=args.dis_step)
         rcode=plot(dic=disdic,outname='',main='distance_distribution',nrow=args.plot_row,ncol=args.plot_column,xmin=args.dis_min,xmax=args.dis_max,ymin=None,ymax=None,xlab='Distance',ylab='Percent',colors=args.plot_colors.split(','))
         #rcode+=vioplot(dic=minmax[2],outname='',main='distance_distribution',nrow=args.plot_row,ncol=args.plot_column,ymin=args.dis_min,ymax=args.dis_max)
-        
+
     if len(occ)>0:
         minmax=positionDicMinMax(occ,lowPercent=0,highPercent=99)
         if args.occ_max==None or args.occ_min==None:
@@ -1086,19 +1086,19 @@ def runPositionStatistics(command='runPositionStatistics'):
 
     if len(width)>0:
         minmax=positionDicMinMax(width,lowPercent=0,highPercent=100)
-        
+
         if args.width_max==None or args.width_min==None:
             if args.width_min==None:args.width_min=max(minmax[0],1)
             if args.width_max==None:args.width_max=minmax[1]
             if args.width_step==None:args.width_step=(args.width_max-args.width_min)/100.0
         widthdic=batchPositionValDistribution(width,outname=args.name+'.width',min=args.width_min,max=args.width_max,step=args.width_step)
         rcode+=plot(dic=widthdic,outname='',main='log10width distribution',nrow=args.plot_row,ncol=args.plot_column,xmin=args.width_min,xmax=args.width_max,ymin=None,ymax=None,xlab='log10 width',ylab='Percent',colors=args.plot_colors.split(','))
-        
+
         #rcode+=vioplot(dic=minmax[2],outname='',main='log10width distribution',nrow=args.plot_row,ncol=args.plot_column,ymin=args.width_min,ymax=args.width_max)
 
     if len(auc)>0:
         minmax=positionDicMinMax(auc,lowPercent=0,highPercent=100)
-        
+
         if args.total_signal_max==None or args.total_signal_min==None:
             if args.total_signal_min==None:args.total_signal_min=max(minmax[0],1)
             if args.total_signal_max==None:args.total_signal_max=minmax[1]
@@ -1106,12 +1106,12 @@ def runPositionStatistics(command='runPositionStatistics'):
         #print 2,minmax[:2],args.total_signal_max,args.total_signal_min,args.total_signal_step,(args.total_signal_max-args.total_signal_min)/100.0
         aucdic=batchPositionValDistribution(auc,outname=args.name+'.total_signal',min=args.total_signal_min,max=args.total_signal_max,step=args.total_signal_step)
         rcode+=plot(dic=aucdic,outname='',main='log10total_signal distribution',nrow=args.plot_row,ncol=args.plot_column,xmin=args.total_signal_min,xmax=args.total_signal_max,ymin=None,ymax=None,xlab='log10 total signal',ylab='Percent',colors=args.plot_colors.split(','))
-        
+
         #rcode+=vioplot(dic=minmax[2],outname='',main='log10total_signal distribution',nrow=args.plot_row,ncol=args.plot_column,ymin=args.total_signal_min,ymax=args.total_signal_max)
 
     if len(height)>0:
         minmax=positionDicMinMax(height,lowPercent=0,highPercent=99.8)
-        
+
         if args.height_max==None or args.height_min==None:
             if args.height_min==None:args.height_min=max(minmax[0],1)
             if args.height_max==None:args.height_max=minmax[1]
@@ -1130,7 +1130,7 @@ def runPositionStatistics(command='runPositionStatistics'):
     fo.close()
     r(rcode)
     print('')
-    
+
 
 
 def runPositionSelector(command='runPositionSelector'):
@@ -1138,14 +1138,14 @@ def runPositionSelector(command='runPositionSelector'):
     Description:
         This function parses input parameters, calls and passes all parameters values to the function positionSelector, or print some help messages if required.
     parameters:
-        none  
+        none
     '''
-    
+
     if (len(sys.argv)<2) and ('-h' not in sys.argv) and ('--help' not in sys.argv):
         # at least two parameter need to be specified, will print help message if no parameter is specified
         print("\nusage:\npython danpos.py selector  <file_path> [optional arguments]\n\nfor more help, please try: python danpos selector -h\n")
         return 0
-    
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,\
                                      usage="\npython danpos.py <command> <file_path>[optional arguments]\n\n",\
                                      description='',epilog="Kaifu Chen, et al. chenkaifu@gmail.com,  \
@@ -1174,7 +1174,7 @@ def runPositionSelector(command='runPositionSelector'):
                         e.g. 'TSS:-350:50' means selecting positions/peaks/regions that are in the TSS flanking region \
                         from 350bp upstream to 50bp downstream. The 'and' at the end means all selections are required, relace 'and' by 'or'\
                         if only and at least one selections is required.")
-    
+
     parser.add_argument('--GREATSelector', dest="GREATSelector",metavar='',default=None,\
                         help="Do selection based on regulatory domain defined by the GREAT algorithm around TSS. \
                         E.g. GREAT:-5000:1000:1000000 define a basal regulatory domain from 5kb upstream to 1kb downstream of each TSS, \
@@ -1187,16 +1187,16 @@ def runPositionSelector(command='runPositionSelector'):
                         help="A reference gene set, required when need to select nucleosomes by genicSelector. \
                         Gene set file must contain at least the following columns ordered as : name, chrom, strand, txStart, txEnd, cdsStart, cdsEnd, exonCount, exonStarts, exonEnds, \
                         we suggest to download gene file from the UCSC tables at http://genome.ucsc.edu/cgi-bin/hgTables?command=start ")
-    
+
     parser.add_argument('--gene_out', dest="gene_out",metavar='',default=None,\
                         help="A name of the file for saving the genes associated with selected positions/peaks/regions, as defined by genicSelector")
-    
+
     if '-h' in sys.argv or '--help' in sys.argv:  # print help information once required by user
         print('\n')
         parser.print_help()
         print('\n')
         return 0
-    
+
     elif len(sys.argv)>=3: # at least two parameter need to be specified
         try:
             args=parser.parse_args()  #all paramter values are now saved in args
@@ -1205,8 +1205,8 @@ def runPositionSelector(command='runPositionSelector'):
             return 0
     else:
         print("\nfor help, please try: python danpos selector -h\n")
-        return 0 
-    
+        return 0
+
     print('\ncommand:\npython'," ".join(sys.argv)) # print the command line, this let the user to keep a log and remember what parameters they specified
     if args.genicSelector!=None and args.GREATSelector!=None:
         print("Wrong: please don't use genicSelector and GREATSelector at the same time!")
@@ -1215,7 +1215,7 @@ def runPositionSelector(command='runPositionSelector'):
         if args.GREATSelector[:6]!='GREAT:':
             print("Wrong: the GREATSelector must starts with 'GREAT:'")
             return False
-    
+
     retr=open(args.file_path).readlines()
     total=max(len(retr)-1,0)
     print(total,'in total')
@@ -1272,20 +1272,20 @@ def runPositionSelector(command='runPositionSelector'):
         print('')
     else:
         print('No positions selected!\n')
-    
+
 def retrievePositionValuesAtRanks(command='retrievePositionValuesAtRanks'):
     '''
     Description:
         None
     parameters:
-        none  
+        none
     '''
-    
+
     if (len(sys.argv)<2) and ('-h' not in sys.argv) and ('--help' not in sys.argv):
         # at least two parameter need to be specified, will print help message if no parameter is specified
         print("\nusage:\npython danpos.py valuesAtRanks <file_path>  [optional arguments] \n\nfor more help, please try: python danpos valuesAtRanks -h\n")
         return 0
-    
+
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,\
                                      usage="\npython danpos.py <command> <file_path>  [optional arguments] \n\n",\
                                      description='',epilog="Kaifu Chen, et al. chenkaifu@gmail.com,  \
@@ -1311,7 +1311,7 @@ def retrievePositionValuesAtRanks(command='retrievePositionValuesAtRanks'):
         parser.print_help()
         print('\n')
         return 0
-    
+
     elif len(sys.argv)>=3: # at least two parameter need to be specified
         try:
             args=parser.parse_args()  #all paramter values are now saved in args
@@ -1320,7 +1320,7 @@ def retrievePositionValuesAtRanks(command='retrievePositionValuesAtRanks'):
             return 0
     else:
         print("\nfor help, please try: python danpos valuesAtRanks -h\n")
-        return 0 
+        return 0
     print('')
     positionLines=open(args.file_path).readlines()
     tcol=positionLines[0].split()
@@ -1346,7 +1346,7 @@ def retrievePositionValuesAtRanks(command='retrievePositionValuesAtRanks'):
             if colid==0:
                 print('error: can not rank by', tcol[colid])
                 return 0
-        
+
         print(sel[0])
         values=[]
         for line in positionLines[1:]:
@@ -1359,7 +1359,7 @@ def retrievePositionValuesAtRanks(command='retrievePositionValuesAtRanks'):
             if r>0:print('\trank',r,':',values[r-1])
             else:print('\trank',r,':',values[r])
     print('')
-    
+
 if __name__ == "__main__":
     if len(sys.argv)>1:
         if sys.argv[1]=='dpos':runDANPOS(command='dpos')
@@ -1374,9 +1374,6 @@ if __name__ == "__main__":
         elif sys.argv[1]=='wig2wiq':wig2wiq()
         else:printHelp()
     else:
-        print('\ndanpos version 2.2.2')
+        print('\ndanpos version 3.1.0')
         print('For a list of functions in danpos, please try:\npython danpos.py -h')
         print('')
-
-
-
